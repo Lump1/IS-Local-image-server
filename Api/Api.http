@@ -1,0 +1,21 @@
+@Api_HostAddress = http://localhost:5036
+
+GET {{Api_HostAddress}}/images/
+Accept: application/json
+
+###
+
+GET {{Api_HostAddress}}/images/count
+Accept: application/json
+
+###
+
+GET {{Api_HostAddress}}/images/image/set/
+Accept: application/json
+
+###
+
+GET {{Api_HostAddress}}/images/image/set/10
+Accept: application/json
+
+###
