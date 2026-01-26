@@ -6,16 +6,16 @@ using System.Text.Json.Serialization;
 
 namespace Worker;
 
-public class DatabaseImageWrite : BackgroundService
+public class DatabaseImageWriteWorker : BackgroundService
 {
-    private readonly ILogger<DatabaseImageWrite> _logger;
+    private readonly ILogger<DatabaseImageWriteWorker> _logger;
     private readonly IConfiguration _configuration;
     private readonly IConnection? _brokerConnection;
     private IChannel? _brokerChannel;
 
     private static readonly string QueueName = RBQ_Queues.ProcessImage.ToString();
 
-    public DatabaseImageWrite(ILogger<DatabaseImageWrite> logger, IConfiguration configuration, IConnection connection)
+    public DatabaseImageWriteWorker(ILogger<DatabaseImageWriteWorker> logger, IConfiguration configuration, IConnection connection)
     {
         _logger = logger;
         _configuration = configuration;
@@ -40,7 +40,14 @@ public class DatabaseImageWrite : BackgroundService
         _logger.LogInformation($"Processed message at {DateTime.UtcNow} with messageId: {args.BasicProperties.MessageId}");
 
         var messageByte = args.Body;
-        var messageJson = JsonSerializer.DeserializeAsync(Encodi);
+        var messageJson = await JsonSerializer.DeserializeAsync<Contracts.Messages.ProcessImage>(
+            new MemoryStream(messageByte.ToArray()),
+            new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+
+        // Handle the deserialized messageJson object as needed
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)

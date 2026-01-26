@@ -6,6 +6,7 @@
         ApplyFilters,
         ProcessImage,
         ProcessMetadata,
+        AuthKeyValidation,
 
         // Another Messages
     }

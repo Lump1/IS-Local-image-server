@@ -12,7 +12,7 @@ public class Program
         builder.AddRedisClient(connectionName: "rediscache");
 
 
-        builder.Services.AddHostedService<DatabaseImageWrite>();
+        builder.Services.AddHostedService<DatabaseImageWriteWorker>();
 
 
         var host = builder.Build();

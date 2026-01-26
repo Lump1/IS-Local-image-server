@@ -24,6 +24,7 @@ using IS.ImageService.Api.Services.DeterminationService;
 using Contracts.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 using IS.ImageService.Api.Services.CacheService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace Api;
@@ -57,6 +58,13 @@ public class Program
         builder.Services.AddSingleton<ITaskPublisher, TaskPublisher>();
         builder.Services.AddSingleton<IFileDeterminator, FileDeterminator>();
         builder.Services.AddSingleton<ICacher, Cacher>();
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(jwtOptions =>
+        {
+            jwtOptions.Authority = "https://{--your-authority--}";
+            jwtOptions.Audience = "https://{--your-audience--}";
+        });
 
 
         builder.Services.AddScoped<IFilterImages, FilterImages>();
