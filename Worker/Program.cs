@@ -9,7 +9,7 @@ public class Program
         var builder = Host.CreateApplicationBuilder(args);
 
         builder.AddRabbitMQClient(connectionName: "broker");
-        builder.AddRedisClient(connectionName: "rediscache");
+        builder.AddRedisDistributedCache(connectionName: "rediscache");
 
 
         builder.Services.AddHostedService<DatabaseImageWriteWorker>();

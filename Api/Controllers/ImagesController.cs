@@ -2,7 +2,6 @@ using Contracts;
 using IS.DbCommon;
 using IS.DbCommon.Models;
 using IS.DbCommon.Models.DTO;
-using IS.ImageService.Api.Services;
 using IS.ImageService.Api.Services.CacheService;
 using IS.ImageService.Api.Services.DeterminationService;
 using IS.ImageService.Api.Services.FilterService;
@@ -16,6 +15,7 @@ using System.Text.Json;
 using CoenM.ImageHash.HashAlgorithms;
 using Contracts.Serialization;
 using CoenM.ImageHash;
+using IS.ImageService.Api.Services.TaskPublisherService;
 
 namespace Api.Controllers;
 

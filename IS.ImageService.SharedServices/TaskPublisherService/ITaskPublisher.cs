@@ -1,6 +1,6 @@
 ﻿using Contracts;
 
-namespace IS.ImageService.Api.Services
+namespace IS.ImageService.Api.Services.TaskPublisherService
 {
     public interface ITaskPublisher
     {

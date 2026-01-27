@@ -1,6 +1,5 @@
 using Contracts;
 using IS.DbCommon;
-using IS.ImageService.Api.Services;
 using IS.ImageService.Api.Services.FilterService;
 using IS.ImageService.Contracts;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +24,7 @@ using Contracts.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 using IS.ImageService.Api.Services.CacheService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using IS.ImageService.Api.Services.TaskPublisherService;
 
 
 namespace Api;
@@ -75,7 +75,7 @@ public class Program
             op.UseNpgsql(cs);
         });
 
-        builder.AddRedisClient(connectionName: "rediscache");
+        builder.AddRedisDistributedCache(connectionName: "rediscache");
 
         builder.Services.AddControllers();
 

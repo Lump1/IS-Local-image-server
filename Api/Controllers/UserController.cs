@@ -15,7 +15,7 @@ namespace IS.ImageService.Api.Controllers
         }
 
         [HttpPost]
-        public Task Register([FromBody] string login, [FromBody] string passwordHash, [FromBody] string systemKeyHash)
+        public IActionResult Register([FromQuery(Name = "login")] string login, [FromQuery(Name = "password-hash")] string passwordHash, [FromQuery(Name = "system-key-hash")] string systemKeyHash)
         {
             // Observer Logic
             _logger.Log(LogLevel.Information, "Someone is trying to access root images api route");

@@ -1,20 +1,18 @@
 ﻿using Contracts;
+using Microsoft.Extensions.Caching.Distributed;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Worker;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace IS.ImageService.Worker;
+namespace Worker;
 
 public class ServerEnrollTokenWorker : BackgroundService
 {
     private readonly ILogger<DatabaseImageWriteWorker> _logger;
     private readonly IConfiguration _configuration;
     private readonly IConnection? _brokerConnection;
+    private readonly IDistributedCache _distributedCache;
 
     //private IChannel[]? _brokerChannels = new IChannel[3];
     //private RBQ_Queues[] RBQBrokerQueues = new RBQ_Queues[3] { RBQ_Queues.AuthKeyValidation };
@@ -25,11 +23,13 @@ public class ServerEnrollTokenWorker : BackgroundService
     public ServerEnrollTokenWorker(
         ILogger<DatabaseImageWriteWorker> logger,
         IConfiguration configuration,
-        IConnection? brokerConnection)
+        IConnection? brokerConnection,
+        IDistributedCache distributedCache)
     {
         _logger = logger;
         _configuration = configuration;
         _brokerConnection = brokerConnection;
+        _distributedCache = distributedCache;
     }
     protected override async Task<Task> ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -46,11 +46,45 @@ public class ServerEnrollTokenWorker : BackgroundService
 
     private async Task KeyValidationAsync(object sender, BasicDeliverEventArgs args)
     {
-        // Implement key validation logic here
+        _logger.LogInformation($"Processed hardware key validation at {DateTime.UtcNow} with messageId: {args.BasicProperties.MessageId}");
+
+        var messageByte = args.Body;
+        var messageJson = await JsonSerializer.DeserializeAsync<Contracts.Messages.HardwareKeyValidation>(
+            new MemoryStream(messageByte.ToArray()),
+            new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+
+        var storedKeyBytes = await _distributedCache.GetAsync("ServerEnrollToken");
+
+        if (storedKeyBytes is null)
+        {
+            _logger.LogWarning("No key found in cache. Please open system for registration.");
+            return;
+        }
+
+        var storedKeyHash = System.Text.Encoding.ASCII.GetString(storedKeyBytes);
+        if (messageJson is not null && messageJson.HardwareKey is not null && messageJson.HardwareKey.GetHashCode().ToString() == storedKeyHash)
+        {
+            _logger.LogInformation($"Hardware key for {messageJson.UserId} validation successful.");
+        }
+        else
+        {
+            _logger.LogWarning("Hardware key validation failed. Generating new key.");
+            await SetNewKeyAsync();
+        }
     }
-    private async Task KeyGenerationAsync()
+
+
+    private async Task SetNewKeyAsync()
     {
-        // Implement key generate logic here
+        await _distributedCache.SetAsync("ServerEnrollToken", System.Text.Encoding.ASCII.GetBytes(KeyGeneration().GetHashCode().ToString()));
+    }
+    private Guid KeyGeneration(string format = "ddd-ddd-ddd")
+    {
+        var key = new Guid(format);
+        return key;
     }
     //private string KeyGenerate()
     //{
