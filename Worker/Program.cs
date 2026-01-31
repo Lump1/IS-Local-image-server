@@ -13,6 +13,7 @@ public class Program
 
 
         builder.Services.AddHostedService<DatabaseImageWriteWorker>();
+        builder.Services.AddHostedService<ServerEnrollTokenWorker>();
 
 
         var host = builder.Build();

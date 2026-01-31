@@ -7,6 +7,7 @@
         ProcessImage,
         ProcessMetadata,
         AuthKeyValidation,
+        AuthKeyOpenTunnel,
 
         // Another Messages
     }
