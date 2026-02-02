@@ -36,4 +36,7 @@ builder.AddProject<Projects.IS_ImageService_Worker>("worker")
     .WithEnvironment("Storage__Root", storageHostPath);
 
 
+builder.AddProject<Projects.CacheHandler>("cachehandler");
+
+
 builder.Build().Run();

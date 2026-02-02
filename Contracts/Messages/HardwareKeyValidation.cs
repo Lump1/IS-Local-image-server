@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Contracts.Messages
 {
-    public sealed record HardwareKeyValidation(string HardwareKey, int UserId);
+    public sealed record HardwareKeyValidation(string HardwareKey, string RedisAwaiterKey);
 }

@@ -85,9 +85,16 @@ public class ServerEnrollTokenWorker : BackgroundService
         var storedKeyHash = System.Text.Encoding.ASCII.GetString(storedKeyBytes);
         if (messageJson is not null && messageJson.HardwareKey is not null && messageJson.HardwareKey.GetHashCode().ToString() == storedKeyHash)
         {
-            _logger.LogInformation($"Hardware key for {messageJson.UserId} validation successful.");
+            _logger.LogInformation($"Hardware key for job with ID: {args.BasicProperties.MessageId} validation successful.");
 
-            //_distributedCache.Set(args.BasicProperties.MessageId)
+            await _distributedCache.SetAsync(messageJson.RedisAwaiterKey + ":" + args.BasicProperties.MessageId, new byte[] { 1 }, 
+                new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1)
+                });
+
+            _logger.LogInformation($"Job with ID: {args.BasicProperties.MessageId}; result was published to cache with {messageJson.RedisAwaiterKey + ":" + args.BasicProperties.MessageId} key.");
+            return;
         }
         else
         {
