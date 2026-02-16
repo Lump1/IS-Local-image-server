@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
-namespace IS.ImageService.Api.Services.TaskPublisherService
+namespace IS.SharedServices.Services.TaskPublisherService
 {
     public class TaskPublisher : ITaskPublisher
     {

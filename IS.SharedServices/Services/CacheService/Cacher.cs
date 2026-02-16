@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Cryptography;
 
-namespace IS.ImageService.Api.Services.CacheService
+namespace IS.SharedServices.Services.CacheService
 {
     public class Cacher : ICacher
     {

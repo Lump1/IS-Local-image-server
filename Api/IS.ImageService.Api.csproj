@@ -27,10 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Contracts\IS.ImageService.Contracts.csproj" />
     <ProjectReference Include="..\IS.DbCommon\IS.DbCommon.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\QueueService\" />
+	<ProjectReference Include="..\IS.SharedServices\IS.SharedServices.csproj" />
   </ItemGroup>
 
 </Project>

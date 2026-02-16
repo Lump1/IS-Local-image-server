@@ -1,7 +1,7 @@
 ﻿using Contracts;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace IS.ImageService.Api.Services.CacheService
+namespace IS.SharedServices.Services.CacheService
 {
     public interface ICacher
     {

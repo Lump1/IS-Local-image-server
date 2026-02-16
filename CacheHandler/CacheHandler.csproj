@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.RabbitMQ.Client" Version="13.1.1" />
+    <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="13.1.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\IS.ImageService.Contracts.csproj" />
   </ItemGroup>
 </Project>

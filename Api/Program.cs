@@ -1,30 +1,12 @@
-using Contracts;
 using IS.DbCommon;
 using IS.ImageService.Api.Services.FilterService;
-using IS.ImageService.Contracts;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
-using System.Linq;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using IS.DbCommon.Models;
 using IS.DbCommon.Models.DTO;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.JSInterop.Infrastructure;
-using SixLabors.ImageSharp;
-using System.Security.Cryptography;
-using CoenM.ImageHash.HashAlgorithms;
-using CoenM.ImageHash;
-using Microsoft.Extensions.Configuration;
 using IS.ImageService.Api.Services.DeterminationService;
-using Contracts.Serialization;
-using Microsoft.Extensions.Caching.Distributed;
-using IS.ImageService.Api.Services.CacheService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using IS.ImageService.Api.Services.TaskPublisherService;
+using IS.SharedServices;
+using IS.SharedServices.Services.CacheService;
 
 
 namespace Api;
@@ -55,9 +37,9 @@ public class Program
 
         builder.AddRabbitMQClient(connectionName: "broker");
 
-        builder.Services.AddSingleton<ITaskPublisher, TaskPublisher>();
+        builder.Services.AddSingleton<IS.SharedServices.Services.TaskPublisherService.ITaskPublisher, IS.SharedServices.Services.TaskPublisherService.TaskPublisher>();
+        builder.Services.AddSingleton<IS.SharedServices.Services.CacheService.ICacher, IS.SharedServices.Services.CacheService.Cacher>();
         builder.Services.AddSingleton<IFileDeterminator, FileDeterminator>();
-        builder.Services.AddSingleton<ICacher, Cacher>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(jwtOptions =>

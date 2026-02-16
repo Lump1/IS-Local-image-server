@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.csproj", "{8F001BBF-31B5-42D4-ADF3-27EBB491FF2E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{16D12B15-E3A0-4581-BC14-CC127ADB9B53} = {16D12B15-E3A0-4581-BC14-CC127ADB9B53}
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C} = {8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImagesService", "ImagesService", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
@@ -21,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.DbCommon", "IS.DbCommon\IS.DbCommon.csproj", "{16D12B15-E3A0-4581-BC14-CC127ADB9B53}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CacheHandler", "CacheHandler\CacheHandler.csproj", "{35B04713-5431-2577-E6EB-9D8C83363E46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.SharedServices", "IS.SharedServices\IS.SharedServices.csproj", "{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +61,10 @@ Global
 		{35B04713-5431-2577-E6EB-9D8C83363E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35B04713-5431-2577-E6EB-9D8C83363E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35B04713-5431-2577-E6EB-9D8C83363E46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
