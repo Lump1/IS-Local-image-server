@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Contracts.Messages
 {
-    public sealed record CacheHandlerSetter(string jobKey, int hopCount);
+    public sealed record CacheHandlerSetter(string jobKey, int hopCount, ReadOnlyMemory<byte> body);
 }

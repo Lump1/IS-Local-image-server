@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Contracts\IS.ImageService.Contracts.csproj" />
+    <ProjectReference Include="..\IS.SharedServices\IS.SharedServices.csproj" />
   </ItemGroup>
 </Project>

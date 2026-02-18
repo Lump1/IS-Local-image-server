@@ -15,10 +15,14 @@ namespace IS.SharedServices.Services.TaskPublisherService
             _connection = connection;
         }
 
-        public async Task<Guid> PublishToQueueAsync(RBQ_Queues rbq_enum, ReadOnlyMemory<byte> body, CancellationToken ct = default)
+        public async Task<Guid> PublishToQueueAsync(RBQ_Queues rbq_enum, ReadOnlyMemory<byte> body, CancellationToken ct = default, string? jobIdForRollback = null)
+        {
+            return await PublishToQueueAsync(jobIdForRollback == null ? GetQueueName(rbq_enum) : RollBackMessageBuilderStatic.RollBackMessageBuilder.RollbackMessageBuild(rbq_enum, jobIdForRollback), body, ct);
+        }
+        private async Task<Guid> PublishToQueueAsync(string rbq_message, ReadOnlyMemory<byte> body, CancellationToken ct = default)
         {
             await using var channel = await _connection.CreateChannelAsync(cancellationToken: ct);
-            var queueName = GetQueueName(rbq_enum);
+            var queueName = rbq_message;
 
             var jobId = Guid.NewGuid();
 

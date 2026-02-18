@@ -1,21 +1,15 @@
 using Contracts;
 using IS.DbCommon;
-using IS.DbCommon.Models;
 using IS.DbCommon.Models.DTO;
-using IS.ImageService.Api.Services.CacheService;
 using IS.ImageService.Api.Services.DeterminationService;
 using IS.ImageService.Api.Services.FilterService;
-using IS.ImageService.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
 using CoenM.ImageHash.HashAlgorithms;
 using Contracts.Serialization;
 using CoenM.ImageHash;
-using IS.ImageService.Api.Services.TaskPublisherService;
+using IS.SharedServices.Services.TaskPublisherService;
+using IS.SharedServices.Services.CacheService;
 
 namespace Api.Controllers;
 

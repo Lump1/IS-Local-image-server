@@ -4,6 +4,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using IS.SharedServices.Services.TaskPublisherService;
 
 namespace CacheHandler;
 
@@ -12,17 +13,19 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly IDistributedCache _distributedCache;
     private readonly IConnection? _brokerConnection;
+    private readonly ITaskPublisher _taskPublisher;
 
     private IChannel? channel;
     private string QueueName = RBQ_Queues.SetCacheHandlerListener.ToString();
 
     private int HopDelay = 5000;
 
-    public Worker(ILogger<Worker> logger, IDistributedCache distributedCache, IConnection? brokerConnection)
+    public Worker(ILogger<Worker> logger, IDistributedCache distributedCache, IConnection? brokerConnection, ITaskPublisher taskPublisher)
     {
         _logger = logger;
         _distributedCache = distributedCache;
         _brokerConnection = brokerConnection;
+        _taskPublisher = taskPublisher;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -77,7 +80,7 @@ public class Worker : BackgroundService
 
         if(isReady)
         {
-            // Open channel for sending result back
+            await _taskPublisher.PublishToQueueAsync(RBQ_Queues.RollbackMessage, messageJson.body, jobIdForRollback: messageJson.jobKey);
         }
         else
         {

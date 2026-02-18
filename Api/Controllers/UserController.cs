@@ -1,12 +1,11 @@
-﻿using IS.ImageService.Api.Services.TaskPublisherService;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using Contracts.Messages;
 using IS.DbCommon;
 using Contracts;
 using System.Text.Json;
 using Contracts.Serialization;
+using IS.SharedServices.Services.TaskPublisherService;
 
 namespace IS.ImageService.Api.Controllers
 {

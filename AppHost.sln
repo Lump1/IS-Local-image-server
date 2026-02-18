@@ -22,6 +22,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.DbCommon", "IS.DbCommon\IS.DbCommon.csproj", "{16D12B15-E3A0-4581-BC14-CC127ADB9B53}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CacheHandler", "CacheHandler\CacheHandler.csproj", "{35B04713-5431-2577-E6EB-9D8C83363E46}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C} = {8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.SharedServices", "IS.SharedServices\IS.SharedServices.csproj", "{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}"
 EndProject

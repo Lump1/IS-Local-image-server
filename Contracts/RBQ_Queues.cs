@@ -8,7 +8,8 @@
         ProcessMetadata,
         AuthKeyValidation,
         AuthKeyOpenTunnel,
-        SetCacheHandlerListener
+        SetCacheHandlerListener,
+        RollbackMessage
 
         // Another Messages
     }
