@@ -15,6 +15,11 @@ public class Program
         >();
 
         builder.Services.AddSingleton<
+            IS.SharedServices.Services.TaskReceiverService.ITaskReceiver,
+            IS.SharedServices.Services.TaskReceiverService.TaskReceiver
+        >();
+
+        builder.Services.AddSingleton<
             IS.SharedServices.Services.CacheService.ICacher,
             IS.SharedServices.Services.CacheService.Cacher
         >();

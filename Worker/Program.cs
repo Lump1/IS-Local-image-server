@@ -11,6 +11,10 @@ public class Program
         builder.AddRabbitMQClient(connectionName: "broker");
         builder.AddRedisDistributedCache(connectionName: "rediscache");
 
+        builder.Services.AddSingleton<
+            IS.SharedServices.Services.TaskReceiverService.ITaskReceiver,
+            IS.SharedServices.Services.TaskReceiverService.TaskReceiver
+        >();
 
         builder.Services.AddHostedService<DatabaseImageWriteWorker>();
         builder.Services.AddHostedService<ServerEnrollTokenWorker>();

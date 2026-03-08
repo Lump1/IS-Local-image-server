@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IS.SharedServices.Services.TaskReceiverService
 {
-    public class TaskReceiver
+    public class TaskReceiver : ITaskReceiver
     {
         private readonly IConnection _connection;
 
@@ -22,7 +22,8 @@ namespace IS.SharedServices.Services.TaskReceiverService
         public async Task ReceiveAsync(RBQ_Queues rbq_queue, DateTime tunnelExpiring, AsyncEventHandler<BasicDeliverEventArgs> handler, CancellationToken ct = default) 
         { 
             var channel = await OpenTunnelAsync(rbq_queue.ToString(), tunnelExpiring, ct);
-            var consumer = CreateConsumerWithHandler(channel, handler);
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.ReceivedAsync += handler;
 
             await channel!.BasicConsumeAsync(queue: rbq_queue.ToString(), autoAck: true, consumer: consumer);
         }

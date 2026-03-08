@@ -14,6 +14,7 @@ namespace Contracts.Serialization
     [JsonSerializable(typeof(Contracts.Messages.ProcessImage))]
     [JsonSerializable(typeof(Contracts.Messages.HardwareKeyValidation))]
     [JsonSerializable(typeof(Contracts.Messages.CacheHandlerSetter))]
+    [JsonSerializable(typeof(Contracts.Messages.RollBackMessage))]
     public partial class MessageJsonContext : JsonSerializerContext
     {
     }

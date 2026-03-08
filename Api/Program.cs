@@ -7,6 +7,7 @@ using IS.ImageService.Api.Services.DeterminationService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using IS.SharedServices;
 using IS.SharedServices.Services.CacheService;
+using IS.SharedServices.Services.TaskReceiverService;
 
 
 namespace Api;
@@ -40,6 +41,7 @@ public class Program
         builder.Services.AddSingleton<IS.SharedServices.Services.TaskPublisherService.ITaskPublisher, IS.SharedServices.Services.TaskPublisherService.TaskPublisher>();
         builder.Services.AddSingleton<IS.SharedServices.Services.CacheService.ICacher, IS.SharedServices.Services.CacheService.Cacher>();
         builder.Services.AddSingleton<IFileDeterminator, FileDeterminator>();
+        builder.Services.AddSingleton<ITaskReceiver, TaskReceiver>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(jwtOptions =>

@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.ImageService.Api", "Api\IS.ImageService.Api.csproj", "{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.ImageService.Worker", "Worker\IS.ImageService.Worker.csproj", "{69C79C25-F84F-479E-3E79-EC68C71F7F70}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C08BC31-D288-4EFB-87EA-1DE1A7578D2C} = {8C08BC31-D288-4EFB-87EA-1DE1A7578D2C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.ImageService.Contracts", "Contracts\IS.ImageService.Contracts.csproj", "{8196BE0F-F1F7-4C16-BD2B-E73AA3CE7F6D}"
 EndProject

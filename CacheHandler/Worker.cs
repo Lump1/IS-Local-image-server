@@ -5,6 +5,7 @@ using RabbitMQ.Client.Events;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using IS.SharedServices.Services.TaskPublisherService;
+using IS.SharedServices.Services.TaskReceiverService;
 
 namespace CacheHandler;
 
@@ -14,30 +15,29 @@ public class Worker : BackgroundService
     private readonly IDistributedCache _distributedCache;
     private readonly IConnection? _brokerConnection;
     private readonly ITaskPublisher _taskPublisher;
+    private readonly ITaskReceiver _taskReceiver;
 
     private IChannel? channel;
-    private string QueueName = RBQ_Queues.SetCacheHandlerListener.ToString();
+    private RBQ_Queues QueueName = RBQ_Queues.SetCacheHandlerListener;
 
     private int HopDelay = 5000;
 
-    public Worker(ILogger<Worker> logger, IDistributedCache distributedCache, IConnection? brokerConnection, ITaskPublisher taskPublisher)
+    public Worker(ILogger<Worker> logger, IDistributedCache distributedCache, IConnection? brokerConnection, ITaskPublisher taskPublisher, ITaskReceiver taskReceiver)
     {
         _logger = logger;
         _distributedCache = distributedCache;
         _brokerConnection = brokerConnection;
         _taskPublisher = taskPublisher;
+        _taskReceiver = taskReceiver;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        channel = await _brokerConnection!.CreateChannelAsync();
-        await channel!.QueueDeclareAsync(QueueName, exclusive: false);
-        var consumer = new AsyncEventingBasicConsumer(channel);
-        if (QueueName == RBQ_Queues.SetCacheHandlerListener.ToString())
-        {
-            consumer.ReceivedAsync += SetListener;
-        }
-        await channel!.BasicConsumeAsync(queue: QueueName, autoAck: true, consumer: consumer);
+        await _taskReceiver.ReceiveAsync(
+            QueueName, 
+            DateTime.UtcNow.AddMinutes(10), 
+            Expression: async (sender, args) => await SetListener(sender, args)
+         );
     }
 
     private async Task SetListener(object sender, BasicDeliverEventArgs args)

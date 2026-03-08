@@ -1,4 +1,5 @@
 using Contracts;
+using IS.SharedServices.Services.TaskReceiverService;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
@@ -9,29 +10,30 @@ namespace Worker;
 public class DatabaseImageWriteWorker : BackgroundService
 {
     private readonly ILogger<DatabaseImageWriteWorker> _logger;
+    private readonly ITaskReceiver _taskReceiver;
     private readonly IConfiguration _configuration;
     private readonly IConnection? _brokerConnection;
     private IChannel? _brokerChannel;
 
-    private static readonly string QueueName = RBQ_Queues.ProcessImage.ToString();
+    private static readonly RBQ_Queues QueueName = RBQ_Queues.ProcessImage;
 
-    public DatabaseImageWriteWorker(ILogger<DatabaseImageWriteWorker> logger, IConfiguration configuration, IConnection connection)
+    public DatabaseImageWriteWorker(ILogger<DatabaseImageWriteWorker> logger, IConfiguration configuration, IConnection connection, ITaskReceiver taskReceiver)
     {
         _logger = logger;
         _configuration = configuration;
         _brokerConnection = connection;
+        _taskReceiver = taskReceiver;
     }
 
     protected override async Task<Task> ExecuteAsync(CancellationToken stoppingToken)
     {
-        _brokerChannel =  await _brokerConnection!.CreateChannelAsync();
-        await _brokerChannel.QueueDeclareAsync(QueueName, exclusive: false);
-
-        var consumer = new AsyncEventingBasicConsumer(_brokerChannel);
-        consumer.ReceivedAsync += ProcessMessageAsync;
-
-        await _brokerChannel.BasicConsumeAsync(queue: QueueName, autoAck: true, consumer: consumer);
-
+        await _taskReceiver.ReceiveAsync(
+            QueueName,
+            DateTime.UtcNow.AddMinutes(10),
+            Expression: async (sender, args) => await ProcessMessageAsync(sender, args),
+            ct: stoppingToken
+        );
+    
         return Task.CompletedTask;
     }
 

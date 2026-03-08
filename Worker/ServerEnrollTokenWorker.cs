@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using IS.SharedServices.Services.TaskReceiverService;
 using Microsoft.Extensions.Caching.Distributed;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -12,6 +13,7 @@ namespace Worker;
 public class ServerEnrollTokenWorker : BackgroundService
 {
     private readonly ILogger<DatabaseImageWriteWorker> _logger;
+    private readonly ITaskReceiver _taskReceiver;
     private readonly IConfiguration _configuration;
     private readonly IConnection? _brokerConnection;
     private readonly IDistributedCache _distributedCache;
@@ -20,44 +22,34 @@ public class ServerEnrollTokenWorker : BackgroundService
     //private RBQ_Queues[] RBQBrokerQueues = new RBQ_Queues[3] { RBQ_Queues.AuthKeyValidation };
 
     private IChannel[]? channels = new IChannel[2];
-    private string[] QueueNames = new string[2] { RBQ_Queues.AuthKeyValidation.ToString(), RBQ_Queues.AuthKeyOpenTunnel.ToString() };
+    private RBQ_Queues[] QueueNames = new RBQ_Queues[2] { RBQ_Queues.AuthKeyValidation, RBQ_Queues.AuthKeyOpenTunnel };
 
     public ServerEnrollTokenWorker(
         ILogger<DatabaseImageWriteWorker> logger,
         IConfiguration configuration,
         IConnection? brokerConnection,
-        IDistributedCache distributedCache)
+        IDistributedCache distributedCache, 
+        ITaskReceiver taskReceiver)
     {
         _logger = logger;
         _configuration = configuration;
         _brokerConnection = brokerConnection;
         _distributedCache = distributedCache;
+        _taskReceiver = taskReceiver;
     }
     protected override async Task<Task> ExecuteAsync(CancellationToken stoppingToken)
     {
         for (int i = 0; i < QueueNames.Length; i++)
         {
-            channels[i] = await _brokerConnection!.CreateChannelAsync();
-            await channels[i]!.QueueDeclareAsync(QueueNames[i], exclusive: false);
-            var consumer = new AsyncEventingBasicConsumer(channels[i]);
-            if (QueueNames[i] == RBQ_Queues.AuthKeyValidation.ToString())
+            Func<object?, BasicDeliverEventArgs, Task> expression = QueueNames[i] switch
             {
-                consumer.ReceivedAsync += KeyValidationAsync;
-            }
-            else if (QueueNames[i] == RBQ_Queues.AuthKeyOpenTunnel.ToString())
-            {
-                consumer.ReceivedAsync += SetNewKeyAsync;
-            }
-            await channels[i]!.BasicConsumeAsync(queue: QueueNames[i], autoAck: true, consumer: consumer);
+                RBQ_Queues.AuthKeyValidation => KeyValidationAsync,
+                RBQ_Queues.AuthKeyOpenTunnel => SetNewKeyAsync,
+                _ => throw new InvalidOperationException("Invalid queue name")
+            };
+
+            await _taskReceiver.ReceiveAsync(QueueNames[i], DateTime.UtcNow.AddMinutes(10), Expression: (sender, args) => expression(sender, args));
         }
-
-        //_brokerChannel = await _brokerConnection!.CreateChannelAsync();
-        //await _brokerChannel.QueueDeclareAsync(RBQ_Queues.AuthKeyValidation.ToString(), exclusive: false);
-
-        //var consumer = new AsyncEventingBasicConsumer(_brokerChannel);
-        //consumer.ReceivedAsync += KeyValidationAsync;
-
-        //await _brokerChannel.BasicConsumeAsync(queue: QueueName, autoAck: true, consumer: consumer);
 
         return Task.CompletedTask;
     }
