@@ -47,7 +47,7 @@ namespace IS.ImageService.Api.Controllers
             ).GetAwaiter().GetResult();
 
             _taskReceiver.ReceiveAsync(
-                RBQ_Queues.AuthKeyValidation,
+                SharedServices.Services.RollBackMessageBuilderStatic.RollBackMessageBuilder.RollbackMessageBuild(RBQ_Queues.RollbackMessage, jobId.ToString()),
                 DateTime.UtcNow.AddMinutes(10),
                 Expression: async (sender, args) => await KeyValidationAsync(sender, args)
             );

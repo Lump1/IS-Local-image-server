@@ -19,5 +19,17 @@ namespace IS.SharedServices.Services.TaskReceiverService
             DateTime tunnelExpiring,
             Func<object?, BasicDeliverEventArgs, Task> Expression,
             CancellationToken ct = default);
+
+        Task ReceiveAsync(
+            string rbq_queue_name,
+            DateTime tunnelExpiring,
+            AsyncEventHandler<BasicDeliverEventArgs> handler,
+            CancellationToken ct = default);
+
+        Task ReceiveAsync(
+            string rbq_queue_name,
+            DateTime tunnelExpiring,
+            Func<object?, BasicDeliverEventArgs, Task> Expression,
+            CancellationToken ct = default);
     }
 }

@@ -20,19 +20,40 @@ namespace IS.SharedServices.Services.TaskReceiverService
         }
 
         public async Task ReceiveAsync(RBQ_Queues rbq_queue, DateTime tunnelExpiring, AsyncEventHandler<BasicDeliverEventArgs> handler, CancellationToken ct = default) 
-        { 
-            var channel = await OpenTunnelAsync(rbq_queue.ToString(), tunnelExpiring, ct);
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += handler;
-
-            await channel!.BasicConsumeAsync(queue: rbq_queue.ToString(), autoAck: true, consumer: consumer);
+        {
+            await ReceiveAsyncInc(rbq_queue.ToString(), tunnelExpiring, handler: handler, ct: ct);
         }
         public async Task ReceiveAsync(RBQ_Queues rbq_queue, DateTime tunnelExpiring, Func<object?, BasicDeliverEventArgs, Task> Expression, CancellationToken ct = default)
         {
-            var channel = await OpenTunnelAsync(rbq_queue.ToString(), tunnelExpiring, ct);
-            var consumer = CreateConsumerWithExpression(channel, Expression);
+            await ReceiveAsyncInc(rbq_queue.ToString(), tunnelExpiring, Expression: Expression, ct: ct);
+        }
+        public async Task ReceiveAsync(string rbq_queue_name, DateTime tunnelExpiring, AsyncEventHandler<BasicDeliverEventArgs> handler, CancellationToken ct = default)
+        {
+            await ReceiveAsyncInc(rbq_queue_name, tunnelExpiring, handler: handler, ct: ct);
+        }
+        public async Task ReceiveAsync(string rbq_queue_name, DateTime tunnelExpiring, Func<object?, BasicDeliverEventArgs, Task> Expression, CancellationToken ct = default)
+        {
+            await ReceiveAsyncInc(rbq_queue_name, tunnelExpiring, Expression: Expression, ct: ct);
+        }
 
-            await channel!.BasicConsumeAsync(queue: rbq_queue.ToString(), autoAck: true, consumer: consumer);
+        private async Task ReceiveAsyncInc(string queueName, DateTime tunnelExpiring, Func<object?, BasicDeliverEventArgs, Task>? Expression = null, AsyncEventHandler<BasicDeliverEventArgs>? handler = null, CancellationToken ct = default)
+        {
+            if(Expression is null && handler is null) throw new ArgumentException("Both Expression and handler cannot be null");
+
+            var channel = await OpenTunnelAsync(queueName, tunnelExpiring, ct);
+
+            var consumer = default(AsyncEventingBasicConsumer);
+
+            if (handler is not null)
+            {
+                consumer = CreateConsumerWithHandler(channel, handler);
+            }
+            else if (Expression is not null)
+            {
+                consumer = CreateConsumerWithExpression(channel, Expression);
+            }
+
+            await channel!.BasicConsumeAsync(queue: queueName, autoAck: true, consumer: consumer);
         }
 
         private async Task<IChannel> OpenTunnelAsync(string queueName, DateTime tunnelExpiring, CancellationToken ct = default)
